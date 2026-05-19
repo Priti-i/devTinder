@@ -1,13 +1,24 @@
 const express=require('express');
-require("./src/config/database");
+require("./config/database");
 const app=express();
 const mongoose = require('mongoose');
-const mongoURI=require("./src/config/database");
 
-const User=require("./src/models/user");
+const mongoURI=require("./config/database");
+const cookieParser=require("cookie-parser");
 app.use(express.json());
+app.use(cookieParser());
+// all routers
+const authRouter=require("./routes/auth");
+const profileRouter=require("./routes/profile");
+const requestRouter=require("./routes/requests");
+app.use("/",authRouter);
+app.use("/",profileRouter);
+app.use("/",requestRouter);
+//const User=require("./models/user");
 
-//get all user
+
+
+//get  user
 app.get("/getuser",async(req,res)=>{
   const userEmail=req.body.email;
   const user=await User.findOne({email:userEmail});
@@ -19,6 +30,7 @@ app.get("/getuser",async(req,res)=>{
       res.send(user);
   }
 })
+
 //get api
 app.get("/getAllUser",async(res,req)=>{
 
@@ -32,20 +44,14 @@ app.get("/getAllUser",async(res,req)=>{
     req.status(500).send("somethinf went wrong")
   }
 })
-// post api
-app.post("/signup",async(req,res)=>{
-    const user=new User(req.body);
-    try{
-          await user.save();
-          res.send("user created");
-    }
-    catch(error)
-    {
-    console.error(error);
-    res.status(500).send("error creating user");  
-    }
-    
-})
+
+
+
+
+
+
+
+
 
 //delete Api by id
 app.delete("/deleteUser",async(req,res)=>{

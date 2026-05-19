@@ -1,8 +1,12 @@
 const mongoose=require("mongoose");
+const validator = require("validator");
+const bcrypt=require("bcrypt");
+const jwt=require("jsonwebtoken");
+
 const userSchema=mongoose.Schema({
     firstName:{
         type:String,
-        require:true,
+        required:true,
         minlength:4,
         maxlength:40,
     },
@@ -11,10 +15,16 @@ const userSchema=mongoose.Schema({
     },
     email:{
       type:String,
-      require:true,
+      required:true,
       lowercase:true,
       unique:true,
       trim:true,
+      validate (value){
+        if(!validator.isEmail(value))
+        {
+            throw new Error("invalid email");
+        }
+      }
     },
     password:{
         type:String
@@ -43,10 +53,26 @@ const userSchema=mongoose.Schema({
     profileUrl:{
         type:String,
         default:"https://www.flaticon.com/free-icon/profile_3135715"
-    }
+    },
+   createdAt: {
+  type: Date,
+  default: Date.now
+}
     
-},{
-    timestamp:true
+}, {
+  timestamps: true
 });
+
+userSchema.methods.getjwtToken=async function(){
+    const user=this;
+    const token =await jwt.sign({_id:this._id},"@webtindertoken",{expiresIn:"1d"});
+     return token;
+}
+
+userSchema.methods.ValidPassword=async function(passwordInputByUser){
+    const user=this;
+    const isMatch=await bcrypt.compare(passwordInputByUser,this.password);
+    return isMatch;
+}
 const User=mongoose.model("user",userSchema);
 module.exports=User;
