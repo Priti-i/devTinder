@@ -3,7 +3,7 @@ const validator = require("validator");
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
 
-const userSchema=mongoose.Schema({
+const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
         required:true,
@@ -62,6 +62,9 @@ const userSchema=mongoose.Schema({
 }, {
   timestamps: true
 });
+
+userSchema.index({firstName:1});
+
 
 userSchema.methods.getjwtToken=async function(){
     const user=this;

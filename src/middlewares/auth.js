@@ -9,8 +9,9 @@ if(!token)
 {
    throw new Error("Token not found");
 }
-const decodedMessage=await jwt.verify(token,"@webtindertoken");
-const{_id}=decodedMessage;
+const decodedMessage=await jwt.verify(token,"@webtindertoken"); // verify token
+const {_id}=decodedMessage;
+console.log("after token created ", decodedMessage);
 const user= await User.findById(_id);
 if(!user){
     throw new Error("user not found");

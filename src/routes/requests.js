@@ -19,10 +19,7 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
         if(!toUser){
             throw new Error("User not found...");
         }
-        if(toUserId==fromUserId)
-        {
-            throw new Error("You cannot send request to yourself");
-        }
+     
         const existConnectionRequest= await ConnectionRequest.findOne(
             {$or:[
                 {fromUserId,toUserId},
@@ -45,4 +42,46 @@ requestRouter.post("/request/send/:status/:toUserId",userAuth,async(req,res)=>{
         res.status(400).send(error.message);
     }
 })
+
+requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
+    try {
+        const loggedInUser = req.user;
+        const { status, requestId } = req.params;
+
+        const isAllowed = ["accepted", "rejected"];
+
+        if (!isAllowed.includes(status)) {
+            return res.status(400).send("Invalid status");
+        }
+
+        const connectionRequest = await ConnectionRequest.findOne({
+            _id: requestId,
+            toUserId: loggedInUser._id
+        });
+
+        console.log("Found request:", connectionRequest);
+
+        if (!connectionRequest) {
+            return res.status(400).send("Connection not found");
+        }
+
+        if (connectionRequest.status !== "intrested") {
+            return res.status(400).send("Request already reviewed");
+        }
+
+        connectionRequest.status = status;
+
+        const data = await connectionRequest.save();
+
+        return res.send({
+            message: "Request reviewed successfully",
+            data
+        });
+
+    } catch (error) {
+        res.status(400).send({
+            message: error.message
+        });
+    }
+});
 module.exports=requestRouter;
