@@ -54,6 +54,9 @@ const data=connectionRequests.map((row)=>{
 
 userRouter.get("/user/feed",userAuth,async(req,res)=>{
     try{
+        const page=parseInt(req.query.page) || 1;
+        const limit=parseInt(req.query.limit) || 10;
+        const skip=(page-1)*limit;
         const logedInUser=req.user;
         const connectionRequests=await ConnectionRequests.find({
             $or:[
@@ -74,9 +77,8 @@ userRouter.get("/user/feed",userAuth,async(req,res)=>{
             {_id:{$ne:logedInUser._id}},
             {_id:{$nin:Array.from(hideUser)}}
         ],
-    }).select("firstName lastName age")
-
-    res.send(user);
+    }).select("firstName lastName age").skip(skip).limit(limit);
+    res.json({data:user});
 
     }catch(error)
     {
