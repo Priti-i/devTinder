@@ -17,18 +17,33 @@ profileRouter.get("/profile/view", userAuth,async (req, res) => {
   }
 });
 
-profileRouter.get("/profile/edit",async(req,res)=>{
-try{
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+  
 
-   if(!validateEditProfile(req)){
-    throw new Error("this field never to be change");
-   }
-}catch(err)
-{
-  res.status(400).send(err.message);
-}
+  try {
+    if (!validateEditProfile(req)) {
+      throw new Error("This field cannot be changed");
+    }
 
-})
+    const loggedInUser = req.user;
+
+    // update fields dynamically
+    Object.keys(req.body).forEach((key) => {
+      loggedInUser[key] = req.body[key];
+    });
+
+    // save updated data
+    await loggedInUser.save();
+
+    res.send({
+      message: "Profile updated successfully",
+      data: loggedInUser,
+    });
+
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
 
 profileRouter.post("/password/change", async (req, res) => {
   try {

@@ -52,7 +52,7 @@ const userSchema=new mongoose.Schema({
     },
     profileUrl:{
         type:String,
-        default:"https://www.flaticon.com/free-icon/profile_3135715"
+        default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_piBsl8BVptf_RnnWGDEEpgBtCEPfVXfO6w&s"
     },
    createdAt: {
   type: Date,

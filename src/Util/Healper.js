@@ -30,5 +30,5 @@ const validateEditProfile=(req)=>{
 
         return isEditAllowed;
 
-}
+};
 module.exports={isValidation, validateEditProfile};
