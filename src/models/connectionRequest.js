@@ -3,11 +3,12 @@ const mongoose=require("mongoose");
 const connectionRequestSchema=new mongoose.Schema({
     fromUserId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"user" , //refrence from user model
+        ref:'user' , //refrence from user model
         required:true,
     },
     toUserId:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:"user",
         required:true,
     },
     status:{
@@ -28,6 +29,6 @@ const connectionRequestSchema=new mongoose.Schema({
 //     }
 //     next();
 // });
-
-const ConnectionRequest=mongoose.model("connectionRequest",connectionRequestSchema);
+const ConnectionRequest = mongoose.models.connectionRequest || 
+mongoose.model("connectionRequest",connectionRequestSchema);
 module.exports=ConnectionRequest; 

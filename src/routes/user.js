@@ -4,7 +4,7 @@ const {userAuth}=require("../middlewares/auth");
 const ConnectionRequests=require("../models/connectionRequest");
 const User = require("../models/user");
 
-
+// get all  connection request
 userRouter.get("/user/requests/receive",userAuth,async(req,res)=>{
     try{
         const logedInUser=req.user;
@@ -13,7 +13,7 @@ userRouter.get("/user/requests/receive",userAuth,async(req,res)=>{
                 toUserId:logedInUser._id,
                 status:"intrested",
             }
-        ).populate("fromUserId",["firstName","lastName"]);
+        ).populate("fromUserId",["firstName","lastName","profileUrl","About"]);
 
         res.json({
             message:"Connection Requests fetched successfully:",
@@ -25,6 +25,7 @@ userRouter.get("/user/requests/receive",userAuth,async(req,res)=>{
     }
 });
 
+// get all connection
 userRouter.get("/user/requests",userAuth,async(req,res)=>{
     try{
         const logedInUser=req.user;
@@ -37,7 +38,7 @@ userRouter.get("/user/requests",userAuth,async(req,res)=>{
         .populate("fromUserId", "firstName lastName  profileUrl About");
 
 const data=connectionRequests.map((row)=>{
-    if(row.fromUserId.toString()===logedInUser._id.toString())
+    if(row.fromUserId._id.toString()===logedInUser._id.toString())
     {
         return row.toUserId;
     }
@@ -53,6 +54,7 @@ const data=connectionRequests.map((row)=>{
     }
 })
 
+// userfeed
 userRouter.get("/user/feed",userAuth,async(req,res)=>{
     try{
         const page=parseInt(req.query.page) || 1;

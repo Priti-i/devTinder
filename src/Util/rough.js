@@ -1,3 +1,69 @@
+// const express = require("express");
+// const cors = require("cors");
+// const cookieParser = require("cookie-parser");
+
+// const app = express();
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//   })
+// );
+
+// app.use(express.json());
+// app.use(cookieParser());
+// const mongoose = require('mongoose');
+// const mongoURI=require("./config/database");
+// // all routers
+// const authRouter=require("./routes/auth");
+// const profileRouter=require("./routes/profile");
+// const requestRouter=require("./routes/requests");
+// const userRouter=require("./routes/user");
+// const chatRouter=require("./routes/chat");
+// app.use("/",authRouter);
+// app.use("/",profileRouter);
+// app.use("/",requestRouter);
+// app.use("/",userRouter);
+// app.use("/",chatRouter);
+
+// mongoose.connect(mongoURI)
+//   .then(() => {console.log('Connected to MongoDB!');
+//     app.listen(3000,()=>{
+//     console.log("server is running");
+// });
+  
+//   }
+// )
+//   .catch(err => console.error('Connection error:', err));
+
+
+
+
+router.get("/chat/connections", userAuth, async (req, res) => {
+    try {
+        const loggedInUser = req.user;
+        
+        // Find all accepted connection requests where logged-in user is sender or receiver
+        const connections = await ConnectionRequest.find({
+            $or: [
+                { fromUserId: loggedInUser._id, status: "accepted" },
+                { toUserId: loggedInUser._id, status: "accepted" }
+            ]
+        })
+        .populate("fromUserId", "firstName lastName profileUrl About")
+        .populate("toUserId", "firstName lastName profileUrl About");
+        // Map through connections to return only the target connection user details
+        const connectionUsers = connections.map((conn) => {
+            if (conn.fromUserId._id.toString() === loggedInUser._id.toString()) {
+                return conn.toUserId;
+            }
+            return conn.fromUserId;
+        });
+        res.status(200).json(connectionUsers);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -65,7 +131,7 @@ io.on("connection", (socket) => {
     try {
       // Save the message in MongoDB
       const newMessage = new Message({
-        conversationId: chatId,
+        chatId,
         senderId,
         text
       });
@@ -94,3 +160,4 @@ mongoose.connect(mongoURI)
     });
   })
   .catch(err => console.error('Connection error:', err));
+

@@ -8,9 +8,9 @@ const bcrypt=require("bcrypt");
 
 profileRouter.get("/profile/view", userAuth,async (req, res) => {
   try {
+    // get all user detail from req.user
     const user=req.user;
-
-    res.send(user);
+    res.send(user); // and then send to the user
 
   } catch (error) {
     res.status(400).send(error.message);
