@@ -23,6 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 const mongoose = require('mongoose');
+const PORT = process.env.PORT;
+const mongoURI = process.env.mongo_URI;
 
 // all routers
 const authRouter = require("./routes/auth");
@@ -83,8 +85,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT;
-const mongoURI = process.env.mongoURI;
+
 // <-- 6. Connect to MongoDB Atlas
 mongoose.connect(mongoURI)
   .then(() => {
