@@ -5,7 +5,7 @@ const http = require("http");            // <-- 1. Import native HTTP module
 const { Server } = require("socket.io"); // <-- 2. Import Socket.io Server
 require("dotenv").config();
 // Import the Message model to save chats to your DB
-const Message = require("./models/Message"); // <-- Adjust path based on your folders
+const Message = require("./models/message"); // <-- Adjust path based on your folders
 
 const app = express();
 
