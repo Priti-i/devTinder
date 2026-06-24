@@ -2,8 +2,10 @@ const express = require("express");
 const authRouter = express.Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { isValidation } = require("../Util/Healper");
+
+const isProduction = process.env.NODE_ENV === "production";
 
 authRouter.post("/signup", async (req, res) => {
   try {
@@ -26,7 +28,12 @@ authRouter.post("/signup", async (req, res) => {
     // generrate jwt token
     const token = await savedUser.getjwtToken();
     // store in cookies and send response to the client
-    res.cookie("token", token, { expires: new Date(Date.now() + 8 * 3600000) });
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+    });
     res.json({ message: "user created successfully", data: savedUser });
   } catch (error) {
     console.error(error);
@@ -57,6 +64,9 @@ authRouter.post("/login", async (req, res) => {
       //here we are setting the token in cookies with an expiration time of 8 hours
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 3600000),
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
       });
       res.send(user);
     } else {
@@ -70,7 +80,12 @@ authRouter.post("/login", async (req, res) => {
 authRouter.post("/Logout", async (req, res) => {
   try {
     // set the token cookies to null and expire it immediately
-    res.cookie("token", null, { expires: new Date(Date.now()) });
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+    });
     res.send("Logout successfully");
   } catch (error) {
     res.status(500).send("Error occurred while logging out " + error.message);

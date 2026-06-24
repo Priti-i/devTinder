@@ -12,9 +12,15 @@ const app = express();
 // Create HTTP server wrapping the Express app instance
 const server = http.createServer(app);  // <-- 3. Wrap express app
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -42,7 +48,7 @@ app.use("/", chatRouter);
 // <-- 4. Initialize Socket.io Server instance
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   }
 });

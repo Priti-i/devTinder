@@ -4,7 +4,7 @@ const User=require("../models/user");
 const {userAuth}=require("../middlewares/auth");
 const {validateEditProfile}=require("../Util/Healper");
 const jwt=require("jsonwebtoken");
-const bcrypt=require("bcrypt");
+const bcrypt=require("bcryptjs");
 
 profileRouter.get("/profile/view", userAuth,async (req, res) => {
   try {
