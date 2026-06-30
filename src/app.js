@@ -13,8 +13,8 @@ const app = express();
 const server = http.createServer(app);  // <-- 3. Wrap express app
 
 const allowedOrigins = [
-  "https://devtinderapp1.netlify.app/",
-  "http://localhost:3000",
+  "https://devtinderapp1.netlify.app",
+  "https://devtinder-fhvs.onrender.com",
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
