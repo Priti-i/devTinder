@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { isValidation } = require("../Util/Healper");
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === "production"; // add new 
 
 authRouter.post("/signup", async (req, res) => {
   try {
